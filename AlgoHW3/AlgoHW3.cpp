@@ -18,59 +18,44 @@ int easyInversionCount(double nums[], int size) {
 // l: The left index for the first
 // m: The middle index for the first
 // r: The right index for the second
-int merge(double arr[], int l, int m, int r)
-{
+int merge(double* Arr, int start, int mid, int end) {
+
 	int sum = 0;
-	int i, j, k;
-	int n1 = m - l + 1;
-	int n2 = r - m;
+	// create a temp array
+	double* temp = (double*)malloc(sizeof(double) * (end - start + 1));
 
-	/* create temp arrays */
-	double* L = (double*)malloc(sizeof(double) * n1);
-	double* R = (double*)malloc(sizeof(double) * n2);
+	// crawlers for both intervals and for temp
+	int i = start, j = mid + 1, k = 0;
 
-	/* Copy data to temp arrays L[] and R[] */
-	for (i = 0; i < n1; i++)
-		L[i] = arr[l + i];
-	for (j = 0; j < n2; j++)
-		R[j] = arr[m + 1 + j];
-
-	/* Merge the temp arrays back into arr[l..r]*/
-	i = 0; // Initial index of first subarray 
-	j = 0; // Initial index of second subarray 
-	k = l; // Initial index of merged subarray 
-	while (i < n1 && j < n2)
-	{
-		if (L[i] <= R[j])
-		{
-			arr[k] = L[i];
-			i++;
+	// traverse both arrays and in each iteration add smaller of both elements in temp 
+	while (i <= mid && j <= end) {
+		if (Arr[i] <= Arr[j]) {
+			temp[k] = Arr[i];
+			k += 1; i += 1;
 		}
-		else
-		{
-			arr[k] = R[j];
-			j++;
+		else {
+			sum++;
+			temp[k] = Arr[j];
+			k += 1; j += 1;
 		}
+	}
+
+	// add elements left in the first interval
+	while (i <= mid) {
 		sum++;
-		k++;
+		temp[k] = Arr[i];
+		k += 1; i += 1;
 	}
 
-	/* Copy the remaining elements of L[], if there
-	   are any */
-	while (i < n1)
-	{
-		arr[k] = L[i];
-		i++;
-		k++;
+	// add elements left in the second interval 
+	while (j <= end) {
+		temp[k] = Arr[j];
+		k += 1; j += 1;
 	}
 
-	/* Copy the remaining elements of R[], if there
-	   are any */
-	while (j < n2)
-	{
-		arr[k] = R[j];
-		j++;
-		k++;
+	// copy temp to original interval
+	for (i = start; i <= end; i += 1) {
+		Arr[i] = temp[i - start];
 	}
 	return sum;
 }
@@ -79,7 +64,7 @@ int merge(double arr[], int l, int m, int r)
 // nums: The array of doubles
 // left: The index of the left of the array
 // right: The index of the right of the array
-int fastInversionCount(double nums[], int left, int right) {
+int fastInversionCount(double* nums, int left, int right) {
 	int count = 0;
 	if (left < right) {
 		int middle = (left + right) / 2;
@@ -125,8 +110,12 @@ int main() {
 	std::cout << "\n";
 	double nums[6] = { 1, 3, 2, 4, 6, 5 };
 	double nums2[5] = { 10, 9, 8, 11, 5 };
-	std::cout << easyInversionCount(nums, 6) << "\n";
-	std::cout << fastInversionCount(nums, 0, 5);
+	double nums3[7] = { 38, 27, 43, 3, 9, 82, 10 };
+	std::cout << easyInversionCount(nums3, 7) << "\n";
+	std::cout << fastInversionCount(nums3, 0, 6) << "\n";
+	for (int i = 0; i < 5; i++) {
+		printf("%e ", nums2[i]);
+	}
 }
 
 // First, write function that reverses string
