@@ -1,6 +1,38 @@
 #include <string>
 #include <iostream>
 
+// Generats recursively the binary reflected Gray code of order n
+// Input: A positive integer n
+// Output: A list of all bit strings of length n composing the Gray code
+std::string* BRGC(int n) {
+	if (n == 1) { // If the length is 0, the only possible bit strings are 0 and 1
+		std::string L[2] = { "0", "1" };
+		return &L[0];
+	}
+	else {
+		std::string* L1 = BRGC(n - 1);
+		int size = pow(2, n); // The size of arrays L1 and L2
+		std::string* L2 = (std::string*) malloc(sizeof(std::string*) * size);
+		for (int i = 0; i < size; i++) {
+			L2[size - i - 1] = L1[i];
+			L1[i].append("0");
+			L2[size - i - 1].append("1");
+		}
+		std::string* L = (std::string*) malloc(sizeof(std::string*) * (size * 2));
+		for (int i = 0; i < size * 2; i++) { // Appends both arrays into new array
+			if (i < size) { // Array L1
+				L[i] = L1[i];
+			}
+			else { // Array L2
+				L[i] = L2[i - size];
+			}
+		}
+		free(L1);
+		free(L2);
+		return L;
+	}
+}
+
 // Counts the number of inversions in an array of doubles
 // nums: The array of numbers
 // size: The size of the array
@@ -34,15 +66,16 @@ int merge(double* Arr, int start, int mid, int end) {
 			k += 1; i += 1;
 		}
 		else {
-			sum++;
 			temp[k] = Arr[j];
+			sum = sum + (mid - i); // Index sum counter
+			// NEW LINE RIGHT HERE
 			k += 1; j += 1;
+			
 		}
 	}
 
 	// add elements left in the first interval
 	while (i <= mid) {
-		sum++;
 		temp[k] = Arr[i];
 		k += 1; i += 1;
 	}
@@ -70,7 +103,7 @@ int fastInversionCount(double* nums, int left, int right) {
 		int middle = (left + right) / 2;
 		count += fastInversionCount(nums, left, middle);
 		count += fastInversionCount(nums, middle + 1, right);
-		count += merge(nums, left, middle, right);
+		count += merge(nums, left, middle + 1, right);
 	}
 	return count;
 }
@@ -111,11 +144,9 @@ int main() {
 	double nums[6] = { 1, 3, 2, 4, 6, 5 };
 	double nums2[5] = { 10, 9, 8, 11, 5 };
 	double nums3[7] = { 38, 27, 43, 3, 9, 82, 10 };
-	std::cout << easyInversionCount(nums3, 7) << "\n";
-	std::cout << fastInversionCount(nums3, 0, 6) << "\n";
-	for (int i = 0; i < 5; i++) {
-		printf("%e ", nums2[i]);
-	}
+	std::cout << easyInversionCount(nums2, 5) << "\n";
+	std::cout << fastInversionCount(nums2, 0, 4) << "\n";
+	//std::string* arr = BRGC(5);
 }
 
 // First, write function that reverses string
